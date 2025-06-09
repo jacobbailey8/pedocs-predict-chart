@@ -1,6 +1,8 @@
 
 import React, { useState } from 'react';
 import { toast } from "@/hooks/use-toast";
+import { Button } from '@/components/ui/button';
+import { Upload } from 'lucide-react';
 import FileUpload from '@/components/FileUpload';
 import PredictionChart from '@/components/PredictionChart';
 import { uploadCSVFile } from '@/services/mockApi';
@@ -9,6 +11,7 @@ import { PredictionData } from '@/types/prediction';
 const Index = () => {
   const [predictions, setPredictions] = useState<PredictionData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasUploadedFile, setHasUploadedFile] = useState(false);
 
   const handleFileUpload = async (file: File) => {
     setIsLoading(true);
@@ -16,6 +19,7 @@ const Index = () => {
       console.log('Uploading file:', file.name);
       const data = await uploadCSVFile(file);
       setPredictions(data);
+      setHasUploadedFile(true);
       toast({
         title: "Success!",
         description: `Generated predictions for the next 6 hours from ${file.name}`,
@@ -32,22 +36,39 @@ const Index = () => {
     }
   };
 
+  const handleUploadNew = () => {
+    setHasUploadedFile(false);
+    setPredictions([]);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto space-y-8">
           {/* Header */}
-          <div className="text-center space-y-4">
+          <div className="text-center space-y-4 relative">
+            {hasUploadedFile && (
+              <Button
+                onClick={handleUploadNew}
+                variant="outline"
+                className="absolute top-0 right-0 gap-2"
+              >
+                <Upload className="w-4 h-4" />
+                Upload New File
+              </Button>
+            )}
             <h1 className="text-4xl font-bold tracking-tight">PEDOCS Score Predictions</h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Upload your CSV data to generate future predictions for the next 6 hours
             </p>
           </div>
 
-          {/* File Upload Section */}
-          <div className="bg-card rounded-xl border shadow-sm p-6">
-            <FileUpload onFileUpload={handleFileUpload} isLoading={isLoading} />
-          </div>
+          {/* File Upload Section - Only show if no file uploaded */}
+          {!hasUploadedFile && (
+            <div className="bg-card rounded-xl border shadow-sm p-6">
+              <FileUpload onFileUpload={handleFileUpload} isLoading={isLoading} />
+            </div>
+          )}
 
           {/* Chart Section */}
           {predictions.length > 0 && (
@@ -63,22 +84,6 @@ const Index = () => {
               </div>
             </div>
           )}
-
-          {/* Info Section */}
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-card rounded-lg border p-6 text-center">
-              <div className="text-2xl font-bold text-primary mb-2">6 Hours</div>
-              <div className="text-sm text-muted-foreground">Prediction Window</div>
-            </div>
-            <div className="bg-card rounded-lg border p-6 text-center">
-              <div className="text-2xl font-bold text-primary mb-2">CSV Upload</div>
-              <div className="text-sm text-muted-foreground">Drag & Drop Support</div>
-            </div>
-            <div className="bg-card rounded-lg border p-6 text-center">
-              <div className="text-2xl font-bold text-primary mb-2">Real-time</div>
-              <div className="text-sm text-muted-foreground">Instant Predictions</div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
