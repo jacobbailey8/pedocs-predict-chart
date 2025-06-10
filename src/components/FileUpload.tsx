@@ -15,10 +15,10 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, isLoading }) => {
   const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragOver(false);
-    
+
     const files = Array.from(e.dataTransfer.files);
     const csvFile = files.find(file => file.type === 'text/csv' || file.name.endsWith('.csv'));
-    
+
     if (csvFile) {
       onFileUpload(csvFile);
     }
@@ -37,16 +37,16 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, isLoading }) => {
     const file = e.target.files?.[0];
     if (file) {
       onFileUpload(file);
+      e.target.value = '';
     }
   }, [onFileUpload]);
 
   return (
-    <Card 
-      className={`relative border-2 border-dashed transition-all duration-200 ${
-        isDragOver 
-          ? 'border-primary bg-primary/5' 
-          : 'border-muted hover:border-primary/50'
-      }`}
+    <Card
+      className={`relative border-2 border-dashed transition-all duration-200 ${isDragOver
+        ? 'border-primary bg-primary/5'
+        : 'border-muted hover:border-primary/50'
+        }`}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
@@ -60,7 +60,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, isLoading }) => {
               <FileInput className="w-8 h-8 text-primary" />
             )}
           </div>
-          
+
           <div className="space-y-2">
             <h3 className="text-lg font-medium">Upload CSV File</h3>
             <p className="text-muted-foreground text-sm">
@@ -69,7 +69,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, isLoading }) => {
           </div>
 
           <div className="space-y-3">
-            <Button 
+            <Button
               disabled={isLoading}
               onClick={() => document.getElementById('file-input')?.click()}
               className="gap-2"
@@ -77,7 +77,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, isLoading }) => {
               <Upload className="w-4 h-4" />
               {isLoading ? 'Processing...' : 'Choose File'}
             </Button>
-            
+
             <input
               id="file-input"
               type="file"
@@ -85,7 +85,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, isLoading }) => {
               onChange={handleFileSelect}
               className="hidden"
             />
-            
+
             <div className="text-xs text-muted-foreground">
               Supported format: CSV files only
             </div>
