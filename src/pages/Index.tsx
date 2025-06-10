@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { toast } from "@/hooks/use-toast";
 import { Button } from '@/components/ui/button';
-import { Upload } from 'lucide-react';
+import { Upload, Info } from 'lucide-react';
 import FileUpload from '@/components/FileUpload';
 import PredictionChart from '@/components/PredictionChart';
 import { uploadCSVFile } from '@/services/predictScores';
@@ -13,6 +13,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const Index = () => {
   const [predictions, setPredictions] = useState<PredictionData[]>([]);
@@ -73,6 +79,27 @@ const Index = () => {
           {/* File Upload Section - Only show if no file uploaded */}
           {!hasUploadedFile && (
             <div className="bg-card rounded-xl border shadow-sm p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold">Upload CSV File</h2>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Info className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-[300px] p-4">
+                      <p className="font-medium mb-2">CSV File Format Requirements:</p>
+                      <ul className="text-sm space-y-2">
+                        <li>• Must include columns: 'PEDOCS Score' and 'Hour'</li>
+                        <li>• 'Hour' format: YYYY-MM-DD HH:MM:SS (e.g., 2024-11-06 04:00:00)</li>
+                        <li>• 'PEDOCS Score' must be a number</li>
+                        <li>• File should contain 48 rows representing the previous 48 hours</li>
+                      </ul>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
               <FileUpload onFileUpload={handleFileUpload} isLoading={isLoading} />
             </div>
           )}
