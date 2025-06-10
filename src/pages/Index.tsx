@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { toast } from "@/hooks/use-toast";
 import { Button } from '@/components/ui/button';
@@ -7,11 +6,19 @@ import FileUpload from '@/components/FileUpload';
 import PredictionChart from '@/components/PredictionChart';
 import { uploadCSVFile } from '@/services/predictScores';
 import { PredictionData } from '@/types/prediction';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const Index = () => {
   const [predictions, setPredictions] = useState<PredictionData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasUploadedFile, setHasUploadedFile] = useState(false);
+  const [timeRange, setTimeRange] = useState(24); // Default to 24 hours
 
   const handleFileUpload = async (file: File) => {
     setIsLoading(true);
@@ -76,11 +83,22 @@ const Index = () => {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h2 className="text-2xl font-semibold">Prediction Results</h2>
-                  <div className="text-sm text-muted-foreground">
-                    Next {predictions.length} hours
-                  </div>
+                  <Select
+                    value={timeRange.toString()}
+                    onValueChange={(value) => setTimeRange(Number(value))}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Select time range" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="3">Next 3 hours</SelectItem>
+                      <SelectItem value="6">Next 6 hours</SelectItem>
+                      <SelectItem value="12">Next 12 hours</SelectItem>
+                      <SelectItem value="24">Next 24 hours</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-                <PredictionChart data={predictions} />
+                <PredictionChart data={predictions} timeRange={timeRange} />
               </div>
             </div>
           )}
