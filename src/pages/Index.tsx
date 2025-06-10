@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Upload } from 'lucide-react';
 import FileUpload from '@/components/FileUpload';
 import PredictionChart from '@/components/PredictionChart';
-import { uploadCSVFile } from '@/services/mockApi';
+import { uploadCSVFile } from '@/services/predictScores';
 import { PredictionData } from '@/types/prediction';
 
 const Index = () => {
@@ -20,10 +20,10 @@ const Index = () => {
       const data = await uploadCSVFile(file);
       setPredictions(data);
       setHasUploadedFile(true);
-      toast({
-        title: "Success!",
-        description: `Generated predictions for the next 6 hours from ${file.name}`,
-      });
+      // toast({
+      //   title: "Success!",
+      //   description: `Generated predictions for the next 6 hours from ${file.name}`,
+      // });
     } catch (error) {
       console.error('Upload error:', error);
       toast({
@@ -47,20 +47,20 @@ const Index = () => {
         <div className="max-w-6xl mx-auto space-y-8">
           {/* Header */}
           <div className="text-center space-y-4 relative">
+            <h1 className="text-4xl font-bold tracking-tight">PEDOCS Score Predictions</h1>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Upload your CSV data to generate future predictions for the next 24 hours
+            </p>
             {hasUploadedFile && (
               <Button
                 onClick={handleUploadNew}
                 variant="outline"
-                className="absolute top-0 right-0 gap-2"
+                className=""
               >
                 <Upload className="w-4 h-4" />
                 Upload New File
               </Button>
             )}
-            <h1 className="text-4xl font-bold tracking-tight">PEDOCS Score Predictions</h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Upload your CSV data to generate future predictions for the next 6 hours
-            </p>
           </div>
 
           {/* File Upload Section - Only show if no file uploaded */}
@@ -71,13 +71,13 @@ const Index = () => {
           )}
 
           {/* Chart Section */}
-          {predictions.length > 0 && (
+          {predictions && predictions.length > 0 && (
             <div className="bg-card rounded-xl border shadow-sm p-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h2 className="text-2xl font-semibold">Prediction Results</h2>
                   <div className="text-sm text-muted-foreground">
-                    Next 6 hours • {predictions.length} data points
+                    Next {predictions.length} hours
                   </div>
                 </div>
                 <PredictionChart data={predictions} />
